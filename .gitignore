@@ -1,0 +1,27 @@
+# VS Code settings
+.vscode/
+
+# Build directories
+build/
+
+# Common C/C++ build artifacts
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# CMake build directories
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
