@@ -3,43 +3,43 @@
 
 #include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 void clearScreen(GLFWwindow *window);
 
 const char *vertexShaderSource = "#version 330 core\n"
-    "layout(location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
+                                 "layout(location = 0) in vec3 aPos;\n"
+                                 "void main()\n"
+                                 "{\n"
+                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0, 0.5, 0.2, 1.0);\n"
-    "}\0";
+                                   "out vec4 FragColor;\n"
+                                   "void main()\n"
+                                   "{\n"
+                                   "   FragColor = vec4(1.0, 0.5, 0.2, 1.0);\n"
+                                   "}\0";
 
 int main()
 {
     // Initialize GLFW library
     glfwInit();
-    
+
     // Configure GLFW window properties
     // Set OpenGL version to 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    
+
     // Use core profile - modern OpenGL functions only (no legacy features)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    // For developing on macOS
-    #ifdef __APPLE__
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-  
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+
+// For developing on macOS
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         // Window creation failed
@@ -72,7 +72,8 @@ int main()
     if (!success)
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     }
 
     // Compile fragment shader
@@ -85,7 +86,8 @@ int main()
     if (!success)
     {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     }
 
     // Create shader program
@@ -101,7 +103,8 @@ int main()
     if (!success)
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
+                  << infoLog << std::endl;
     }
 
     glUseProgram(shaderProgram);
@@ -137,7 +140,7 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
     // Unbind the VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -165,14 +168,14 @@ int main()
     return 0;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow *window)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
