@@ -112,24 +112,39 @@ int main()
 
     // Set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
-        // Positions
-        -0.5f, -0.5f, 0.0f, // Bottom Left
-         0.5f, -0.5f, 0.0f, // Bottom Right
-         0.0f,  0.5f, 0.0f  // Top
+        0.5f, 0.5f, 0.0f,   // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f   // top left
     };
-    unsigned int VBO, VAO;
+    unsigned int indices[] = {
+        // first triangle made from the first, second and fourth vertices:
+        0, 1, 3,
+        // second triangle made from the second, third and fourth vertices:
+        1, 2, 3};
+
+    unsigned int EBO, VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     // Set vertex attribute pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // Unbind the VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    // Uncomment this line to draw in wireframe mode
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -140,7 +155,7 @@ int main()
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3); // Draw the triangle
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Draw the rectangle
 
         glfwSwapBuffers(window);
         glfwPollEvents();
