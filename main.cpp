@@ -115,16 +115,18 @@ int main()
 
     // Set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
-        0.5f, 0.5f, 0.0f,   // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f   // top left
-    };
+        // Triange One:
+        -0.25f, 0.5f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        -0.5f, 0.0f, 0.0f,
+        // Triange Two:
+        0.5f, 0.0f, 0.0f,
+        0.25f, -0.5f, 0.0f};
     unsigned int indices[] = {
-        // first triangle made from the first, second and fourth vertices:
-        0, 1, 3,
-        // second triangle made from the second, third and fourth vertices:
-        1, 2, 3};
+        // first triangle
+        0, 1, 2,
+        // second triangle
+        3, 4, 1};
 
     unsigned int EBO, VAO, VBO;
     glGenVertexArrays(1, &VAO);
