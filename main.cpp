@@ -6,6 +6,7 @@
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 void clearScreen(GLFWwindow *window);
+void bindVertexAndBuffer(float vertices[], int verticesSize, unsigned int &VAO, unsigned int &VBO);
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout(location = 0) in vec3 aPos;\n"
@@ -113,30 +114,31 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // Set up vertex data (and buffer(s)) and configure vertex attributes
-    float vertices[] = {
-        // Triange One:
-        -0.25f, 0.5f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        -0.5f, 0.0f, 0.0f,
-        // Triange Two:
-        0.5f, 0.0f, 0.0f,
-        0.25f, -0.5f, 0.0f,
-        0.0f, 0.0f, 0.0f
+    // Set up vertex data as a single array containing both triangles
+    float vertices[][9] = {
+        // Triangle One
+        {
+            -0.25f, 0.5f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            -0.5f, 0.0f, 0.0f
+        },
+        // Triangle Two
+        {
+            0.5f, 0.0f, 0.0f,
+            0.25f, -0.5f, 0.0f,
+            0.0f, 0.0f, 0.0f
+        }
     };
 
-    unsigned int VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    unsigned int VAO[2], VBO[2];
+    glGenVertexArrays(2, VAO);
+    glGenBuffers(2, VBO);
 
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // Now loop through each triangle and set up its buffer
+    for (int i = 0; i < 2; i++) {
+        bindVertexAndBuffer(vertices[i], sizeof(vertices[i]), VAO[i], VBO[i]);
+    }
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Set vertex attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
     // Unbind the VBO and VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -152,8 +154,11 @@ int main()
         clearScreen(window);
 
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        for (int i = 0, l = sizeof(VAO); i < l; i++)
+        {
+            glBindVertexArray(VAO[i]);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -179,4 +184,14 @@ void clearScreen(GLFWwindow *window)
     // Clear the screen with a specific color
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void bindVertexAndBuffer(float vertices[], int verticesSize, unsigned int &vao, unsigned int &vbo)
+{
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+    // Set vertex attribute pointers
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
 }
