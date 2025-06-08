@@ -15,12 +15,20 @@ const char *vertexShaderSource = "#version 330 core\n"
                                  "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
                                  "}\0";
 
-const char *fragmentShaderSource = "#version 330 core\n"
+const char *fragmentShaderOrangeSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
                                    "void main()\n"
                                    "{\n"
                                    "   FragColor = vec4(1.0, 0.5, 0.2, 1.0);\n"
                                    "}\0";
+const char *fragmentShaderYellowSource = "#version 330 core\n"
+                                   "out vec4 FragColor;\n"
+                                   "void main()\n"
+                                   "{\n"
+                                   "   FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
+                                   "}\0";
+
+const char *bob[] = {fragmentShaderOrangeSource, fragmentShaderYellowSource};
 
 int main()
 {
@@ -77,42 +85,50 @@ int main()
                   << infoLog << std::endl;
     }
 
-    // Compile fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    // Check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
+    unsigned int fragmentShader;
+    unsigned int shaderProgram;
+    unsigned int shaderPrograms[] = {0, 0};
+    for (int i = 0; i < 2; i++)
     {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
-                  << infoLog << std::endl;
+        // Compile fragment shader
+        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragmentShader, 1, &bob[i], NULL);
+        glCompileShader(fragmentShader);
+
+        // Check for shader compile errors
+        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
+                    << infoLog << std::endl;
+        }
+
+        // Create shader program
+        shaderProgram = glCreateProgram();
+
+        // Attach shaders to the program
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+
+        // Check for linking errors
+        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
+                    << infoLog << std::endl;
+        }
+
+        // glUseProgram(shaderProgram);
+        shaderPrograms[i] = shaderProgram;
+        // Delete the shaders as they're no longer needed
+        glDeleteShader(fragmentShader);
     }
-
-    // Create shader program
-    unsigned int shaderProgram = glCreateProgram();
-
-    // Attach shaders to the program
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    // Check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-                  << infoLog << std::endl;
-    }
-
-    glUseProgram(shaderProgram);
 
     // Delete the shaders as they're no longer needed
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
 
     // Set up vertex data as a single array containing both triangles
     float vertices[][9] = {
@@ -153,9 +169,9 @@ int main()
 
         clearScreen(window);
 
-        glUseProgram(shaderProgram);
-        for (int i = 0, l = sizeof(VAO); i < l; i++)
+        for (int i = 0; i < sizeof(VAO); i++)
         {
+            glUseProgram(shaderPrograms[i]);
             glBindVertexArray(VAO[i]);
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
