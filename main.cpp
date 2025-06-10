@@ -28,7 +28,7 @@ const char *fragmentShaderYellowSource = "#version 330 core\n"
                                    "   FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
                                    "}\0";
 
-const char *bob[] = {fragmentShaderOrangeSource, fragmentShaderYellowSource};
+const char *fragmentShaderSources[] = {fragmentShaderOrangeSource, fragmentShaderYellowSource};
 
 int main()
 {
@@ -92,7 +92,7 @@ int main()
     {
         // Compile fragment shader
         fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &bob[i], NULL);
+        glShaderSource(fragmentShader, 1, &fragmentShaderSources[i], NULL);
         glCompileShader(fragmentShader);
 
         // Check for shader compile errors
