@@ -14,7 +14,7 @@ if(NOT EXISTS ${GLAD_IMPLEMENTATION_FILE})
 endif()
 
 # Add executable with glad implementation
-add_executable(learn-opengl main.cpp ${GLAD_IMPLEMENTATION_FILE})
+add_executable(learn-opengl main.cpp ${GLAD_IMPLEMENTATION_FILE} shader_s.cpp)
 
 # Link libraries
 target_link_libraries(learn-opengl PRIVATE glfw "-framework OpenGL")
